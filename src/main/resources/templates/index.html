@@ -40,10 +40,11 @@
         }
 
         function displayBlog(array) {
-            let list = "<table border='1px' class=\"table\" >\n" +
+            let list = "<table border='1px' class=\"table\">\n" +
                 "<tr>\n" +
                 "<th> id</th>\n" +
                 "<th> title</th>\n" +
+                "<th> time</th>\n" +
                 "<th> edit</th>\n" +
                 "<th> delete</th>\n" +
                 "<th> detail</th>\n" +
@@ -51,6 +52,7 @@
             for (let i = 0; i < array.length; i++) {
                 list += "<tr>" + "<td>" + array[i].id + "</td>\n" +
                     " <td>" + array[i].title + "</td>\n" +
+                    " <td>" + array[i].time + "</td>\n" +
                     " <td>" + "<button class=\"btn btn-success\" onclick=\"showFormEdit(" + array[i].id + ")\">edit</button>\n" + "</td>" +
                     " <td>" + "<button class=\"btn btn-success\" onclick=\"remote(" + array[i].id + ")\">delete</button>\n" + "</td>" +
                     " <td>" + "<button class=\"btn btn-success\" onclick=\"findOne(" + array[i].id + ")\">detail</button>" + "</td>" +
@@ -76,6 +78,7 @@
                 "<tr>\n" +
                 "<th> id</th>\n" +
                 "<th> title</th>\n" +
+                "<th> time</th>\n" +
                 "<th> edit</th>\n" +
                 "<th> delete</th>\n" +
                 "<th> detail</th>\n" +
@@ -83,6 +86,7 @@
             for (let i = 0; i < array.length; i++) {
                 list += "<tr>" + "<td>" + array[i].id + "</td>\n" +
                     " <td>" + array[i].title + "</td>\n" +
+                    " <td>" + array[i].time + "</td>\n" +
                     " <td>" + "<button class=\"btn btn-success\" onclick=\"showFormEdit(" + array[i].id + ")\">edit</button>\n" + "</td>" +
                     " <td>" + "<button class=\"btn btn-success\" onclick=\"remote(" + array[i].id + ")\">delete</button>\n" + "</td>" +
                     " <td>" + "<button class=\"btn btn-success\" onclick=\"findOne(" + array[i].id + ")\">detail</button>" + "</td>" +
@@ -93,13 +97,23 @@
         }
 
         function getOne(array) {
-            let list = ""
-            list += array.id + " " +
-                array.title + " " +
-                array.content + " " +
-                array.status.name
-                // "<button onclick='showFormEdit(" + array[i].id + ")'>edit</button>" +
-                + "<br>"
+            let list = "<table border='1px' class=\"table\" >\n" +
+                "<tr>\n" +
+                "<th> id</th>\n" +
+                "<th> title</th>\n" +
+                "<th> content</th>\n" +
+                "<th> time</th>\n" +
+                "<th> edit</th>\n" +
+                "<th> delete</th>\n" +
+                "</tr>"
+            list += "<tr>" + "<td>" + array.id + "</td>\n" +
+                " <td>" + array.title + "</td>\n" +
+                " <td>" + array.content + "</td>\n" +
+                " <td>" + array.time + "</td>\n" +
+                " <td>" + "<button class=\"btn btn-success\" onclick=\"showFormEdit(" + array.id + ")\">edit</button>\n" + "</td>" +
+                " <td>" + "<button class=\"btn btn-success\" onclick=\"remote(" + array.id + ")\">delete</button>\n" + "</td>" +
+                "</tr>"
+            list += " </table>"
             document.getElementById("display").innerHTML = list
         }
 
@@ -114,19 +128,21 @@
         }
 
         function remote(id) {
-            $.ajax({
-                type: "DELETE",
-                url: "http://localhost:8080/api/blogs/delete/" + id,
-                success: function (a) {
-                    getAllBlog(a)
-                }
-            })
+            if (confirm("delete??")) {
+                $.ajax({
+                    type: "DELETE",
+                    url: "http://localhost:8080/api/blogs/delete/" + id,
+                    success: function (a) {
+                        getAllBlog(a)
+                    }
+                })
+            }
         }
 
         function showFormAdd() {
-            let form = '<input type="text" id="title">\n' +
-                '<textarea rows="4" cols="50" id="content"></textarea>\n' +
-                '<select id="status" >';
+            let form = '<h1>title</h1>'+'<input placeholder="title"  class="form-control" type="text" id="title">\n' +
+                '<h1>content</h1>'+ '<textarea placeholder="content" class="form-control" rows="4" cols="50" id="content"></textarea>\n' +
+                '<h1>status</h1>'+'<select class="form-control form-control-lg" id="status" >';
             $.ajax({
                 type: "GET",
                 url: "http://localhost:8080/api/blogs/status",
@@ -135,7 +151,7 @@
                         form += `<option value="${a[i].id}">${a[i].name}</option>`
                     }
                     form += `</select>\n` +
-                        '<button onclick="save()">save</button>';
+                        '<button class="btn btn-success" onclick="save()">save</button>';
                     document.getElementById("display").innerHTML = form;
                 }
             })
@@ -174,9 +190,9 @@
                 url: "http://localhost:8080/api/blogs/findOne/" + id,
                 success: function (data) {
                     // console.log(data)
-                    edit = '<input type="text"  id="title" value="' + data.title + '">\n' +
-                        '<textarea  id="content" >' + data.content + '</textarea>\n' +
-                        '<select id="status">\n';
+                    edit =  '<h1>title</h1>'+'<input placeholder="title"  class="form-control" type="text"  id="title" value="' + data.title + '">\n' +
+                    '<h1>title</h1>'+ '<textarea placeholder="title"  class="form-control"  id="content" >' + data.content + '</textarea>\n' +
+                    '<h1>title</h1>'+  '<select class="form-control form-control-lg" id="status">\n';
                     $.ajax({
                         type: "GET",
                         url: "http://localhost:8080/api/blogs/status",
@@ -186,7 +202,7 @@
                                 edit += `<option value="${a[i].id}">${a[i].name}</option>`
                             }
                             edit += `</select>` +
-                                '<button onclick="saveEdit(' + data.id + ')">save</button>';
+                                '<button class="btn btn-success" onclick="saveEdit(' + data.id + ')">save</button>';
                             document.getElementById("display").innerHTML = edit;
                         }
                     })
@@ -222,9 +238,9 @@
     </script>
 </head>
 <body>
-<button onclick="getAllBlog()">show list blog</button>
-<button onclick="getAllBlogPublic()">show list blog public</button>
-<button onclick="showFormAdd()">add</button>
+<button class="btn btn-success" onclick="getAllBlog()">show list blog</button>
+<button class="btn btn-success" onclick="getAllBlogPublic()">show list blog public</button>
+<button class="btn btn-success" onclick="showFormAdd()">add</button>
 <center>
     <div id="display"></div>
 </center>
