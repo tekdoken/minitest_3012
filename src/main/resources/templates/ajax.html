@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript">
+        function getAllBlog() {
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:8080/api/blogs/list",
+                success: function (a) {
+                    console.log(a)
+                    displayBlog(a)
+                }
+            })
+        }
+
+        function displayBlog(array) {
+            let list = ""
+            for (let i = 0; i < array.length; i++) {
+                list += array[i].id + " " +
+                    array[i].title + " " +
+                    "<button onclick='showFormEdit(" + array[i].id + ")'>edit</button>" +
+                    "<button onclick='remote (" + array[i].id + ")'>delete</button>" +
+                    "<button onclick='findOne (" + array[i].id + ")'>detail</button>"
+                    + "<br>"
+            }
+        }
+
+        function getAllBlogPublic() {
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:8080/api/blogs/listpublic",
+                success: function (a) {
+                    console.log(a)
+                    displayBlogPublic(a)
+                }
+            })
+        }
+
+        function displayBlogPublic(array) {
+            let list = ""
+            for (let i = 0; i < array.length; i++) {
+                list += array[i].id + " " +
+                    array[i].title + " " +
+                    "<button onclick='showFormEdit(" + array[i].id + ")'>edit</button>" +
+                    "<button onclick='remote (" + array[i].id + ")'>delete</button>" +
+                    "<button onclick='findOne (" + array[i].id + ")'>detail</button>"
+                    + "<br>"
+            }
+            document.getElementById("display").innerHTML = list
+        }
+
+        function getOne(array) {
+            let list = ""
+            list += array.id + " " +
+                array.title + " " +
+                array.content + " " +
+                array.status.name
+                // "<button onclick='showFormEdit(" + array[i].id + ")'>edit</button>" +
+                + "<br>"
+            document.getElementById("display").innerHTML = list
+        }
+
+        function findOne(id) {
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:8080/api/blogs/findOne/" + id,
+                success: function (a) {
+                    getOne(a)
+                }
+            })
+        }
+
+        function remote(id) {
+            $.ajax({
+                type: "DELETE",
+                url: "http://localhost:8080/api/blogs/delete/" + id,
+                success: function (a) {
+                    getAllBlog(a)
+                }
+            })
+        }
+
+        function showFormAdd() {
+            let form = '<input type="text" id="title">\n' +
+                '<textarea rows="4" cols="50" id="content"></textarea>\n' +
+                '<select id="status" >';
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:8080/api/blogs/status",
+                success: function (a) {
+                    for (let i = 0; i < a.length; i++) {
+                        form += `<option value="${a[i].id}">${a[i].name}</option>`
+                    }
+                    form += `</select>\n` +
+                        '<button onclick="save()">save</button>';
+                    document.getElementById("display").innerHTML = form;
+                }
+            })
+            console.log(form)
+        }
+
+        function save() {
+            let title = document.getElementById("title").value
+            let content = document.getElementById("content").value
+            let status = document.getElementById("status").value
+            let a = {
+                title: title,
+                content: content,
+                status: {
+                    id: status
+                }
+            }
+            $.ajax({
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                type: "POST",
+                url: "http://localhost:8080/api/blogs/add",
+                data: JSON.stringify(a),
+                success: function (a) {
+                    getAllBlog(a)
+                }
+            });
+        }
+
+        function showFormEdit(id) {
+            let edit = ""
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:8080/api/blogs/findOne/" + id,
+                success: function (data) {
+                    console.log(data)
+                    edit = '<input type="text"  id="title" value="' + data.title + '">\n' +
+                        '<textarea  id="content" >' + data.content + '</textarea>\n' +
+                        '<select id="status">\n';
+                    $.ajax({
+                        type: "GET",
+                        url: "http://localhost:8080/api/blogs/status",
+                        success: function (a) {
+                            console.log(a)
+                            for (let i = 0; i < a.length; i++) {
+                                edit += `<option value="${a[i].id}">${a[i].name}</option>`
+                            }
+                            edit += `</select>` +
+                                '<button onclick="saveEdit(' + data.id + ')">save</button>';
+                            document.getElementById("display").innerHTML = edit;
+                        }
+                    })
+                }
+            })
+        }
+
+        function saveEdit(id) {
+            let title = document.getElementById("title").value
+            let content = document.getElementById("content").value
+            let status = document.getElementById("status").value
+            let a = {
+                title: title,
+                content: content,
+                status: {
+                    id: status
+                }
+            }
+            console.log(a)
+            $.ajax({
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                type: "PUT",
+                url: "http://localhost:8080/api/blogs/edit/" + id,
+                data: JSON.stringify(a),
+                success: function (a) {
+                    getAllBlog(a)
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<button onclick="getAllBlog()">show list blog</button>
+<button onclick="getAllBlogPublic()">show list blog public</button>
+<button onclick="showFormAdd()">add</button>
+<div id="display"></div>
+</body>
+</html>
