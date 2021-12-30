@@ -18,7 +18,8 @@ public class BlogService implements IBlogService {
         return iBlogRepository.findAll();
     }
 
-    public Iterable<Blog> findAllPublic(Status status) {
+    @Override
+    public Iterable<Blog> findAllByStatus(Status status) {
         return iBlogRepository.findAllByStatus(status);
     }
 

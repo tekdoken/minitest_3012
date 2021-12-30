@@ -21,45 +21,52 @@ public class BlogController {
     BlogService blogService;
     @Autowired
     StatusService statusService;
+
     @GetMapping("/list")
     public ResponseEntity<Iterable<Blog>> list() {
         return new ResponseEntity<>(blogService.findAll(), HttpStatus.OK);
     }
+
     @GetMapping("/status")
     public ResponseEntity<Iterable<Status>> listStatus() {
         return new ResponseEntity<>(statusService.findAll(), HttpStatus.OK);
     }
+
     @GetMapping("/listpublic")
     public ResponseEntity<Iterable<Blog>> listPublic() {
-        Long a= Long.valueOf(2);
-        Optional<Status > status=statusService.findById(a);
-      Iterable<Blog>  blogs=blogService.findAllPublic(status.get());
+        Long a = Long.valueOf(2);
+        Optional<Status> status = statusService.findById(a);
+        Iterable<Blog> blogs = blogService.findAllByStatus(status.get());
         return new ResponseEntity<>(blogs, HttpStatus.OK);
     }
+
     @PostMapping("/add")
     public ResponseEntity<Blog> add(@RequestBody Blog blog) {
-        LocalDateTime time=LocalDateTime.now();
+        LocalDateTime time = LocalDateTime.now();
         blog.setTime(time);
         blogService.save(blog);
         return new ResponseEntity<>(blog, HttpStatus.OK);
     }
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Blog> delete(@PathVariable Long id) {
         blogService.remote(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
     @PutMapping("/edit/{id}")
     public ResponseEntity<Optional<Blog>> edit(@PathVariable Long id, @RequestBody Blog blog) {
         Optional<Blog> blogOptional = blogService.findById(id);
         blog.setId(blogOptional.get().getId());
-        LocalDateTime time=LocalDateTime.now();
+        LocalDateTime time = LocalDateTime.now();
         blog.setTime(time);
         blogService.save(blog);
         return new ResponseEntity<>(blogOptional, HttpStatus.OK);
     }
+
     @GetMapping("/findOne/{id}")
-    public ResponseEntity<Optional<Blog>> findOne(@PathVariable Long id){
-        return new ResponseEntity<>(blogService.findById(id),HttpStatus.OK);
+    public ResponseEntity<Optional<Blog>> findOne(@PathVariable Long id) {
+        return new ResponseEntity<>(blogService.findById(id), HttpStatus.OK);
     }
 }
 
