@@ -51,7 +51,7 @@
                 "</tr>"
             for (let i = 0; i < array.length; i++) {
                 list += "<tr>" + "<td>" + array[i].id + "</td>\n" +
-                    " <td>" + array[i].title + "</td>\n" +
+                      " <td>"+"<p onclick='findOne("+array[i].id+")'>" +array[i].title+"</p>"+ "</td>\n" +
                     " <td>" + array[i].time + "</td>\n" +
                     " <td>" + "<button class=\"btn btn-success\" onclick=\"showFormEdit(" + array[i].id + ")\">edit</button>\n" + "</td>" +
                     " <td>" + "<button class=\"btn btn-success\" onclick=\"remote(" + array[i].id + ")\">delete</button>\n" + "</td>" +
@@ -191,8 +191,8 @@
                 success: function (data) {
                     // console.log(data)
                     edit =  '<h1>title</h1>'+'<input placeholder="title"  class="form-control" type="text"  id="title" value="' + data.title + '">\n' +
-                    '<h1>title</h1>'+ '<textarea placeholder="title"  class="form-control"  id="content" >' + data.content + '</textarea>\n' +
-                    '<h1>title</h1>'+  '<select class="form-control form-control-lg" id="status">\n';
+                    '<h1>content</h1>'+ '<textarea placeholder="title"  class="form-control"  id="content" >' + data.content + '</textarea>\n' +
+                    '<h1>status</h1>'+  '<select class="form-control form-control-lg" id="status">\n';
                     $.ajax({
                         type: "GET",
                         url: "http://localhost:8080/api/blogs/status",
@@ -237,10 +237,28 @@
         }
     </script>
 </head>
-<body>
-<button class="btn btn-success" onclick="getAllBlog()">show list blog</button>
-<button class="btn btn-success" onclick="getAllBlogPublic()">show list blog public</button>
-<button class="btn btn-success" onclick="showFormAdd()">add</button>
+<body onload="getAllBlogPublic()">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <button class="btn btn-success" onclick="getAllBlog()">show list blog</button>
+            </li>
+            <li class="nav-item">
+                <button class="btn btn-success" onclick="getAllBlogPublic()">home</button>
+
+            </li>
+            <li class="nav-item">
+                <button class="btn btn-success" onclick="showFormAdd()">add</button>
+
+            </li>
+
+        </ul>
+    </div>
+</nav>
 <center>
     <div id="display"></div>
 </center>
