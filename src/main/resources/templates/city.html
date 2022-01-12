@@ -28,41 +28,39 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script type="text/javascript">
 
-        function getAllBlog() {
+        function getAllCity() {
             $.ajax({
                 type: "GET",
-                url: "http://localhost:8080/api/blogs/list",
+                url: "http://localhost:8080/api/cities/list",
                 success: function (a) {
                     console.log(a)
-                    displayBlog(a)
+                    displayCity(a)
                 }
             })
         }
 
-        function displayBlog(array) {
+        function displayCity(array) {
             let list = "<table border='1px' class=\"table\">\n" +
                 "<tr>\n" +
                 "<th> id</th>\n" +
-                "<th> title</th>\n" +
-                "<th> time</th>\n" +
+                "<th> Name City</th>\n" +
+                "<th> Nation</th>\n" +
                 "<th> edit</th>\n" +
                 "<th> delete</th>\n" +
-                "<th> detail</th>\n" +
                 "</tr>"
             for (let i = 0; i < array.length; i++) {
                 list += "<tr>" + "<td>" + array[i].id + "</td>\n" +
-                      " <td>"+"<p onclick='findOne("+array[i].id+")'>" +array[i].title+"</p>"+ "</td>\n" +
-                    " <td>" + array[i].time + "</td>\n" +
+                    " <td>"+"<p onclick='findOne("+array[i].id+")'>" +array[i].name+"</p>"+ "</td>\n" +
+                    " <td>" + array[i].nation.name + "</td>\n" +
                     " <td>" + "<button class=\"btn btn-success\" onclick=\"showFormEdit(" + array[i].id + ")\">edit</button>\n" + "</td>" +
                     " <td>" + "<button class=\"btn btn-success\" onclick=\"remote(" + array[i].id + ")\">delete</button>\n" + "</td>" +
-                    " <td>" + "<button class=\"btn btn-success\" onclick=\"findOne(" + array[i].id + ")\">detail</button>" + "</td>" +
                     "</tr>"
             }
             list += " </table>"
             document.getElementById("display").innerHTML = list
         }
 
-        function getAllBlogPublic() {
+        function getAllCityPublic() {
             $.ajax({
                 type: "GET",
                 url: "http://localhost:8080/api/blogs/listpublic",
@@ -100,16 +98,22 @@
             let list = "<table border='1px' class=\"table\" >\n" +
                 "<tr>\n" +
                 "<th> id</th>\n" +
-                "<th> title</th>\n" +
-                "<th> content</th>\n" +
-                "<th> time</th>\n" +
+                "<th> Name City</th>\n" +
+                "<th> Acreage</th>\n" +
+                "<th> Population</th>\n" +
+                "<th> GDP</th>\n" +
+                "<th> Introduce</th>\n" +
+                "<th> Nation</th>\n" +
                 "<th> edit</th>\n" +
                 "<th> delete</th>\n" +
                 "</tr>"
             list += "<tr>" + "<td>" + array.id + "</td>\n" +
-                " <td>" + array.title + "</td>\n" +
-                " <td>" + array.content + "</td>\n" +
-                " <td>" + array.time + "</td>\n" +
+                " <td>" + array.name + "</td>\n" +
+                " <td>" + array.acreage + "</td>\n" +
+                " <td>" + array.population + "</td>\n" +
+                " <td>" + array.GDP + "</td>\n" +
+                " <td>" + array.nation.name + "</td>\n" +
+                " <td>" + array.introduce + "</td>\n" +
                 " <td>" + "<button class=\"btn btn-success\" onclick=\"showFormEdit(" + array.id + ")\">edit</button>\n" + "</td>" +
                 " <td>" + "<button class=\"btn btn-success\" onclick=\"remote(" + array.id + ")\">delete</button>\n" + "</td>" +
                 "</tr>"
@@ -120,7 +124,7 @@
         function findOne(id) {
             $.ajax({
                 type: "GET",
-                url: "http://localhost:8080/api/blogs/findOne/" + id,
+                url: "http://localhost:8080/api/cities/findOne/" + id,
                 success: function (a) {
                     getOne(a)
                 }
@@ -131,21 +135,25 @@
             if (confirm("delete??")) {
                 $.ajax({
                     type: "DELETE",
-                    url: "http://localhost:8080/api/blogs/delete/" + id,
+                    url: "http://localhost:8080/api/cities/delete/" + id,
                     success: function (a) {
-                        getAllBlog(a)
+                        getAllCity(a)
                     }
                 })
             }
         }
 
         function showFormAdd() {
-            let form = '<h1>title</h1>'+'<input placeholder="title"  class="form-control" type="text" id="title">\n' +
-                '<h1>content</h1>'+ '<textarea placeholder="content" class="form-control" rows="4" cols="50" id="content"></textarea>\n' +
-                '<h1>status</h1>'+'<select class="form-control form-control-lg" id="status" >';
+            let form =
+                '<h1>Name</h1>'+'<input placeholder="name"  class="form-control" type="text" id="name">\n' +
+                '<h1>Acreage</h1>'+'<input placeholder="acreage"  class="form-control" type="text" id="acreage">\n' +
+                '<h1>Population</h1>'+'<input placeholder="population"  class="form-control" type="text" id="population">\n' +
+                '<h1>GDP</h1>'+'<input placeholder="GDP"  class="form-control" type="text" id="GDP">\n' +
+                '<h1>Introduce</h1>'+ '<textarea placeholder="introduce" class="form-control" rows="4" cols="50" id="introduce"></textarea>\n' +
+                '<h1>Nation</h1>'+'<select class="form-control form-control-lg" id="nation" >';
             $.ajax({
                 type: "GET",
-                url: "http://localhost:8080/api/blogs/status",
+                url: "http://localhost:8080/api/cities/nation",
                 success: function (a) {
                     for (let i = 0; i < a.length; i++) {
                         form += `<option value="${a[i].id}">${a[i].name}</option>`
@@ -159,15 +167,21 @@
         }
 
         function save() {
-            let title = document.getElementById("title").value
-            let content = document.getElementById("content").value
-            let status = document.getElementById("status").value
+            let name = document.getElementById("name").value
+            let acreage = document.getElementById("acreage").value
+            let population = document.getElementById("population").value
+            let GDP = document.getElementById("GDP").value
+            let introduce = document.getElementById("introduce").value
+            let nation = document.getElementById("nation").value
             let a = {
-                title: title,
-                content: content,
-                status: {
-                    id: status
-                }
+                name: name,
+                acreage: acreage,
+                population: population,
+                introduce: introduce,
+                nation: {
+                    id: nation
+                },
+                GDP: GDP
             }
             $.ajax({
                 headers: {
@@ -175,10 +189,10 @@
                     'Content-Type': 'application/json'
                 },
                 type: "POST",
-                url: "http://localhost:8080/api/blogs/add",
+                url: "http://localhost:8080/api/cities/add",
                 data: JSON.stringify(a),
                 success: function (a) {
-                    getAllBlog(a)
+                    getAllCity(a)
                 }
             });
         }
@@ -187,15 +201,19 @@
             let edit = ""
             $.ajax({
                 type: "GET",
-                url: "http://localhost:8080/api/blogs/findOne/" + id,
+                url: "http://localhost:8080/api/cities/findOne/" + id,
                 success: function (data) {
                     // console.log(data)
-                    edit =  '<h1>title</h1>'+'<input placeholder="title"  class="form-control" type="text"  id="title" value="' + data.title + '">\n' +
-                    '<h1>content</h1>'+ '<textarea placeholder="title"  class="form-control"  id="content" >' + data.content + '</textarea>\n' +
-                    '<h1>status</h1>'+  '<select class="form-control form-control-lg" id="status">\n';
+                    edit =
+                        '<h1>name</h1>'+'<input placeholder="name"  class="form-control" type="text"  id="name" value="' + data.name + '">\n' +
+                        '<h1>GDP</h1>'+'<input placeholder="name"  class="form-control" type="text"  id="GDP" value="' + data.GDP + '">\n' +
+                        '<h1>population</h1>'+'<input placeholder="name"  class="form-control" type="text"  id="population" value="' + data.population + '">\n' +
+                        '<h1>acreage</h1>'+'<input placeholder="name"  class="form-control" type="text"  id="acreage" value="' + data.acreage + '">\n' +
+                        '<h1>introduce</h1>'+ '<textarea placeholder="GDP"  class="form-control"  id="introduce" >' + data.introduce + '</textarea>\n' +
+                        '<h1>nation</h1>'+  '<select class="form-control form-control-lg" id="nation">\n';
                     $.ajax({
                         type: "GET",
-                        url: "http://localhost:8080/api/blogs/status",
+                        url: "http://localhost:8080/api/cities/nation",
                         success: function (a) {
                             // console.log(a)
                             for (let i = 0; i < a.length; i++) {
@@ -211,33 +229,45 @@
         }
 
         function saveEdit(id) {
-            let title = document.getElementById("title").value
-            let content = document.getElementById("content").value
-            let status = document.getElementById("status").value
+            let name = document.getElementById("name").value
+            let acreage = document.getElementById("acreage").value
+            let population = document.getElementById("population").value
+            let GDP = document.getElementById("GDP").value
+            let introduce = document.getElementById("introduce").value
+            let nation = document.getElementById("nation").value
             let a = {
-                title: title,
-                content: content,
-                status: {
-                    id: status
-                }
+                name: name,
+                acreage: acreage,
+                population: population,
+                introduce: introduce,
+                nation: {
+                    id: nation
+                },
+                GDP: GDP
             }
-            // console.log(a)
             $.ajax({
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
                 type: "PUT",
-                url: "http://localhost:8080/api/blogs/edit/" + id,
+                url: "http://localhost:8080/api/cities/edit/" + id,
                 data: JSON.stringify(a),
                 success: function (a) {
-                    getAllBlog(a)
+                    getAllCity(a)
                 }
             });
         }
+        function validateForm() {
+            let x = document.forms["myForm"]["fname"].value;
+            if (x == "") {
+                alert("Name must be filled out");
+                return false;
+            }
+        }
     </script>
 </head>
-<body onload="getAllBlogPublic()">
+<body onload="getAllCityPublic()">
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -245,10 +275,10 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
             <li class="nav-item active">
-                <button class="btn btn-success" onclick="getAllBlog()">show list blog</button>
+                <button class="btn btn-success" onclick="getAllCity()">show list blog</button>
             </li>
             <li class="nav-item">
-                <button class="btn btn-success" onclick="getAllBlogPublic()">home</button>
+                <button class="btn btn-success" onclick="getAllCityPublic()">home</button>
 
             </li>
             <li class="nav-item">
